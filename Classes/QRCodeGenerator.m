@@ -24,26 +24,29 @@
 #import "QRCodeGenerator.h"
 #import "qrencode.h"
 
-enum {
-	qr_margin = 3
-};
-
 @implementation QRCodeGenerator
 
 + (void)drawQRCode:(QRcode *)code context:(CGContextRef)ctx size:(CGFloat)size {
-	unsigned char *data = 0;
-	int width;
-	data = code->data;
-	width = code->width;
-	float zoom = (double)size / (code->width + 2.0 * qr_margin);
-	CGRect rectDraw = CGRectMake(0, 0, zoom, zoom);
+	int margin = 0;
+	unsigned char *data = code->data;
+	int width = code->width;
+	int totalWidth = width + margin * 2;
+	int imageSize = (int)floorf(size);	
 	
+	// @todo - review float->int stuff
+	int pixelSize = imageSize / totalWidth;
+	if (imageSize % totalWidth) {
+		pixelSize = imageSize / width;
+		margin = (imageSize - width * pixelSize) / 2;
+	}
+	
+	CGRect rectDraw = CGRectMake(0.0f, 0.0f, pixelSize, pixelSize);
 	// draw
 	CGContextSetFillColor(ctx, CGColorGetComponents([UIColor blackColor].CGColor));
 	for(int i = 0; i < width; ++i) {
 		for(int j = 0; j < width; ++j) {
 			if(*data & 1) {
-				rectDraw.origin = CGPointMake((j + qr_margin) * zoom,(i + qr_margin) * zoom);
+				rectDraw.origin = CGPointMake(margin + j * pixelSize, margin + i * pixelSize);
 				CGContextAddRect(ctx, rectDraw);
 			}
 			++data;
@@ -57,8 +60,14 @@ enum {
 		return nil;
 	}
 	
+	// generate QR
 	QRcode *code = QRcode_encodeString([string UTF8String], 0, QR_ECLEVEL_L, QR_MODE_8, 1);
 	if (!code) {
+		return nil;
+	}
+	
+	if (code->width > size) {
+		printf("Image size is less than qr code size (%d)\n", code->width);
 		return nil;
 	}
 	
@@ -77,7 +86,7 @@ enum {
 	CGImageRef qrCGImage = CGBitmapContextCreateImage(ctx);
 	UIImage * qrImage = [UIImage imageWithCGImage:qrCGImage];
 	
-	// some releases
+	// free memory
 	CGContextRelease(ctx);
 	CGImageRelease(qrCGImage);
 	CGColorSpaceRelease(colorSpace);

@@ -24,17 +24,19 @@
 #import "QRCodesGeneratorAppDelegate.h"
 #import "QRCodeGenerator.h"
 
+#import <QuartzCore/QuartzCore.h>
 @implementation QRCodesGeneratorAppDelegate
 @synthesize window;
 
 #pragma mark - Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	
 	// sample
-	UIImageView * imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(10, 50, 300, 300)] autorelease];
+	self.window.rootViewController = [[[UIViewController alloc] init] autorelease];
+	UIImageView *imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(10.0f, 50.0f, 300.0f, 300.0f)] autorelease];
+	imageView.backgroundColor = [UIColor orangeColor];
 	imageView.image = [QRCodeGenerator qrImageForString:@"Hello, world!" imageSize:imageView.bounds.size.width];
-	[self.window addSubview: imageView];
+	[self.window.rootViewController.view addSubview:imageView];
     [self.window makeKeyAndVisible];
     return YES;
 }
