@@ -44,7 +44,7 @@
 	
 	CGRect rectDraw = CGRectMake(0.0f, 0.0f, pixelSize, pixelSize);
 	// draw
-	CGContextSetFillColor(ctx, CGColorGetComponents(fillColor.CGColor));
+	CGContextSetFillColorWithColor(ctx, fillColor.CGColor);
 	for(int i = 0; i < width; ++i) {
 		for(int j = 0; j < width; ++j) {
 			if(*data & 1) {
