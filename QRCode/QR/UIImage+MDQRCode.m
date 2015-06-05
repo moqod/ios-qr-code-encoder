@@ -120,8 +120,14 @@
     
     CGFloat size = imageSize * [[UIScreen mainScreen] scale];
     
+    if(width)
+    {
     *width = code->width;
+    }
+    if(version)
+    {
     *version = code->version;
+    }
 
     if (code->width > size) {
         printf("Image size is less than qr code size (%d)\n", code->width);
