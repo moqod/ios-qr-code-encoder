@@ -35,7 +35,9 @@
 	CGFloat imageSize = ceilf(viewController.view.bounds.size.width * 0.6f);
 	UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(floorf(viewController.view.bounds.size.width * 0.5f - imageSize * 0.5f), floorf(viewController.view.bounds.size.height * 0.5f - imageSize * 0.5f), imageSize, imageSize)];
 	[viewController.view addSubview:imageView];
-	imageView.image = [UIImage mdQRCodeForString:@"Hello, world!" size:imageView.bounds.size.width fillColor:[UIColor darkGrayColor]];
+//	imageView.image = [UIImage mdQRCodeForString:@"Hello, world!" size:imageView.bounds.size.width fillColor:[UIColor darkGrayColor]];
+    imageView.image = [UIImage mdQRCodeForString:@"Hello, world!" size:imageView.bounds.size.width fillImage:[UIImage imageNamed:@"redButton"]];
+
 	self.window.rootViewController = viewController;
     return YES;
 }

@@ -33,6 +33,7 @@
  */
 + (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)size;
 + (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)size fillColor:(UIColor *)fillColor;
++ (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)size fillImage:(UIImage *)fillImage;
 
 
 @end
