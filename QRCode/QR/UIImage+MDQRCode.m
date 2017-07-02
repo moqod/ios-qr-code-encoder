@@ -28,82 +28,106 @@
 
 #pragma mark - private
 
-+ (void)mdDrawQRCode:(QRcode *)code context:(CGContextRef)ctx size:(CGFloat)size fillColor:(UIColor *)fillColor {
-	int margin = 0;
-	unsigned char *data = code->data;
-	int width = code->width;
-	int totalWidth = width + margin * 2;
-	int imageSize = (int)floorf(size);
-	
-	// @todo - review float->int stuff
-	int pixelSize = imageSize / totalWidth;
-	if (imageSize % totalWidth) {
-		pixelSize = imageSize / width;
-		margin = (imageSize - width * pixelSize) / 2;
-	}
-	
-	CGRect rectDraw = CGRectMake(0.0f, 0.0f, pixelSize, pixelSize);
-	// draw
-	CGContextSetFillColorWithColor(ctx, fillColor.CGColor);
-	for(int i = 0; i < width; ++i) {
-		for(int j = 0; j < width; ++j) {
-			if(*data & 1) {
-				rectDraw.origin = CGPointMake(margin + j * pixelSize, margin + i * pixelSize);
-				CGContextAddRect(ctx, rectDraw);
-			}
-			++data;
-		}
-	}
-	CGContextFillPath(ctx);
++ (void)mdDrawQRCode:(QRcode *)code context:(CGContextRef)ctx size:(CGFloat)size   fillImage:(UIImage *)fillImage orFillColor:(UIColor *)fillColor {
+    int margin = 0;
+    unsigned char *data = code->data;
+    int width = code->width;
+    int totalWidth = width + margin * 2;
+    int imageSize = (int)floorf(size);
+    
+    // @todo - review float->int stuff
+    int pixelSize = imageSize / totalWidth;
+    if (imageSize % totalWidth) {
+        pixelSize = imageSize / width;
+        margin = (imageSize - width * pixelSize) / 2;
+    }
+    
+    CGRect rectDraw = CGRectMake(0.0f, 0.0f, pixelSize, pixelSize);
+    // draw
+    if (fillColor) {
+        CGContextSetFillColorWithColor(ctx, fillColor.CGColor);
+    }
+    
+    for(int i = 0; i < width; ++i) {
+        for(int j = 0; j < width; ++j) {
+            if(*data & 1) {
+                rectDraw.origin = CGPointMake(margin + j * pixelSize, margin + i * pixelSize);
+                if (fillColor) {
+                    CGContextAddRect(ctx, rectDraw);
+                }else if (fillImage) {
+                    UIGraphicsPushContext(ctx);
+                    [fillImage drawInRect:rectDraw];
+                    UIGraphicsPopContext();
+                }
+            }
+            ++data;
+        }
+    }
+    CGContextFillPath(ctx);
+}
+
++ (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)imageSize boxImage:(UIImage *)fillImage orFillColor:(UIColor *)fillColor{
+    
+    
+    if (0 == [qrString length]) {
+        return nil;
+    }
+    
+    // generate QR
+    QRcode *code = QRcode_encodeString([qrString UTF8String], 0, QR_ECLEVEL_L, QR_MODE_8, 1);
+    if (!code) {
+        return nil;
+    }
+    
+    CGFloat size = imageSize * [[UIScreen mainScreen] scale];
+    if (code->width > size) {
+        printf("Image size is less than qr code size (%d)\n", code->width);
+        return nil;
+    }
+    
+    // create context
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    // The constants for specifying the alpha channel information are declared with the CGImageAlphaInfo type but can be passed to this parameter safely.
+    
+    CGContextRef ctx = CGBitmapContextCreate(0, size, size, 8, size * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
+    
+    CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -size);
+    CGAffineTransform scaleTransform = CGAffineTransformMakeScale(1, -1);
+    CGContextConcatCTM(ctx, CGAffineTransformConcat(translateTransform, scaleTransform));
+    
+    // draw QR on this context
+    
+    [self mdDrawQRCode:code context:ctx size:size fillImage:fillImage orFillColor:fillColor];
+    
+    
+    // get image
+    CGImageRef qrCGImage = CGBitmapContextCreateImage(ctx);
+    UIImage * qrImage = [UIImage imageWithCGImage:qrCGImage];
+    
+    // free memory
+    CGContextRelease(ctx);
+    CGImageRelease(qrCGImage);
+    CGColorSpaceRelease(colorSpace);
+    QRcode_free(code);
+    return qrImage;
+    
 }
 
 #pragma mark - public
 
+
 + (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)size {
-	return [self mdQRCodeForString:qrString size:size fillColor:[UIColor blackColor]];
+    return [self mdQRCodeForString:qrString size:size fillColor:[UIColor blackColor]];
 }
 
 + (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)imageSize fillColor:(UIColor *)fillColor {
-	if (0 == [qrString length]) {
-		return nil;
-	}
-	
-	// generate QR
-	QRcode *code = QRcode_encodeString([qrString UTF8String], 0, QR_ECLEVEL_L, QR_MODE_8, 1);
-	if (!code) {
-		return nil;
-	}
-	
-	CGFloat size = imageSize * [[UIScreen mainScreen] scale];
-	if (code->width > size) {
-		printf("Image size is less than qr code size (%d)\n", code->width);
-		return nil;
-	}
-	
-	// create context
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	
-	// The constants for specifying the alpha channel information are declared with the CGImageAlphaInfo type but can be passed to this parameter safely.
-
-	CGContextRef ctx = CGBitmapContextCreate(0, size, size, 8, size * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
-	
-	CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -size);
-	CGAffineTransform scaleTransform = CGAffineTransformMakeScale(1, -1);
-	CGContextConcatCTM(ctx, CGAffineTransformConcat(translateTransform, scaleTransform));
-	
-	// draw QR on this context
-	[self mdDrawQRCode:code context:ctx size:size fillColor:fillColor];
-	
-	// get image
-	CGImageRef qrCGImage = CGBitmapContextCreateImage(ctx);
-	UIImage * qrImage = [UIImage imageWithCGImage:qrCGImage];
-	
-	// free memory
-	CGContextRelease(ctx);
-	CGImageRelease(qrCGImage);
-	CGColorSpaceRelease(colorSpace);
-	QRcode_free(code);
-	return qrImage;
+    return [self mdQRCodeForString:qrString size:imageSize boxImage:nil orFillColor:fillColor];
+    
 }
++ (UIImage *)mdQRCodeForString:(NSString *)qrString size:(CGFloat)imageSize fillImage:(UIImage *)fillImage{
+    return [self mdQRCodeForString:qrString size:imageSize boxImage:fillImage orFillColor:nil];
+}
+
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31693FC71F0939F8000F9231 /* redButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 31693FC61F0939F8000F9231 /* redButton.png */; };
 		52DC9B6E188D65A300272042 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC9B6D188D65A300272042 /* Foundation.framework */; };
 		52DC9B70188D65A300272042 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC9B6F188D65A300272042 /* CoreGraphics.framework */; };
 		52DC9B72188D65A300272042 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52DC9B71188D65A300272042 /* UIKit.framework */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		31693FC61F0939F8000F9231 /* redButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redButton.png; sourceTree = "<group>"; };
 		52DC9B6A188D65A300272042 /* QRCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52DC9B6D188D65A300272042 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		52DC9B6F188D65A300272042 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -180,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				52DC9B9D188D660C00272042 /* Default-568h@2x.png */,
+				31693FC61F0939F8000F9231 /* redButton.png */,
 				52DC9B9E188D660C00272042 /* Default@2x.png */,
 				52DC9B9F188D660C00272042 /* Icon.png */,
 			);
@@ -298,6 +301,7 @@
 				52DC9BA2188D660C00272042 /* Icon.png in Resources */,
 				52DC9B80188D65A300272042 /* Images.xcassets in Resources */,
 				52DC9BA0188D660C00272042 /* Default-568h@2x.png in Resources */,
+				31693FC71F0939F8000F9231 /* redButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +526,7 @@
 				52DC9B98188D65A300272042 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		52DC9B99188D65A300272042 /* Build configuration list for PBXNativeTarget "QRCodeTests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +535,7 @@
 				52DC9B9B188D65A300272042 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
